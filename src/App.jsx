@@ -6,15 +6,22 @@ const initialState = {input:"",}
 const reducer = (state, action) => {
   switch (action.type) {
     case 'ADD':
-      if ("+/*-".includes(state.input.slice(-1)) && "+/*-".includes(action.payload) ){ 
-       return { ...state, input: state.input + action.payload }
-      } else{
+      if ("+/*-".includes(state.input.slice(-1)) && "+/*-".includes(action.payload)) { 
+       return state; 
+      } else {
         return { ...state, input: state.input + action.payload }
       }
     case 'CLEAR':
       return initialState;
-    case 'CALCULATE':
-      return { ...state, input: eval(state.input).toString() }
+      case 'CALCULATE':
+        try {
+            return {
+                ...state,
+                input: eval(state.input).toString(),
+            };
+        } catch (error) {
+            return { ...state, input: "Error" };
+        }
     case 'DEL':
       return { ...state, input: state.input.slice(0, -1) }
     default:
@@ -32,9 +39,8 @@ function App() {
       dispatch({ type: "CLEAR" })
     } else if(value === 'DEL') {
       dispatch({ type: "DEL" })
-    } else  {
-      if (state.input === "" && ["+", "-", "*", "/"].includes(value)) {
-        alert("An operator cannot be the first character!");
+    } else {
+      if (state == initialState && '+/*-='.includes(value)){
         return;
       }
       dispatch({ type: "ADD", payload: value })
@@ -71,7 +77,7 @@ function App() {
       </div>
     </>
   ) 
-
 }
 
 export default App;
+
